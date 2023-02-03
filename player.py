@@ -1,11 +1,17 @@
+from blocks.air import Air
+from overlays.inventory_overlay import InventoryOverlay
+
+
 class Player:
-    def __init__(self, x=0, y=0):
+    def __init__(self, camera, x=0, y=0):
+        self.camera = camera
         self.x = x
         self.y = y
         self.inventory_slots = 10
         self.inventory = []
         self.symbol = '@'
         self.debug_str = ''
+        self.selected_item = 0
 
     def __str__(self):
         return self.symbol
@@ -26,4 +32,47 @@ class Player:
         #         self.inventory.append(item)
         # else:
         #     self.inventory[item_in_inventory]['count'] += item['count']
+
+    def input(self, key):
+        # Player Movement
+        if key == ord('W') or key == ord('S') or key == ord('A') or key == ord('D') or key == ord('w') or key == ord(
+                's') or key == ord('a') or key == ord('d'):
+            if key == ord('W') or key == ord('w'):
+                if self.y > 0:
+                    if not self.camera.map.body_layer[self.x][self.y - 1].opaque:
+                        self.camera.map.body_layer[self.y - 1][self.x] = self
+                        self.camera.map.body_layer[self.y][self.x] = Air()
+                        self.y = self.y - 1
+            elif key == ord('S') or key == ord('s'):
+                if self.y < self.camera.map.height - 1:
+                    if not self.camera.map.body_layer[self.x][self.y + 1].opaque:
+                        self.camera.map.body_layer[self.y + 1][self.x] = self
+                        self.camera.map.body_layer[self.y][self.x] = Air()
+                        self.y = self.y + 1
+            elif key == ord('A') or key == ord('a'):
+                if self.x > 0:
+                    if not self.camera.map.body_layer[self.x - 1][self.y].opaque:
+                        self.camera.map.body_layer[self.y][self.x - 1] = self
+                        self.camera.map.body_layer[self.y][self.x] = Air()
+                        self.x = self.x - 1
+            elif key == ord('D') or key == ord('d'):
+                if self.x < self.camera.map.width - 1:
+                    if not self.camera.map.body_layer[self.x + 1][self.y].opaque:
+                        self.camera.map.body_layer[self.y][self.x + 1] = self
+                        self.camera.map.body_layer[self.y][self.x] = Air()
+                        self.x = self.x + 1
+        # Interacting
+        elif key == ord('E') or key == ord('e'):
+            self.debug_str += 'Interact pressed\n'
+            if self.camera.map.floor_layer[self.y][self.x].interactable:
+                self.debug_str += 'Interact\n'
+                self.camera.map.floor_layer[self.y][self.x].on_interact(self)
+        elif key == ord('1') or key == ord('2') or key == ord('3') or key == ord('4') or key == ord('5') or key == ord(
+            '6') or key == ord('7') or key == ord('8') or key == ord('9') or key == ord('0'):
+            c = chr(key)
+            new_index = 9 if c == '0' else str(int(c) - 1)
+            if int(new_index) < len(self.inventory):
+                self.selected_item = int(new_index)
+        elif key == ord('I') or key == ord('i'):
+            self.camera.overlay = InventoryOverlay(self.camera)
 

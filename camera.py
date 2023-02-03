@@ -8,6 +8,18 @@ class Camera:
         self.map = map
         self.x = 0
         self.y = 0
+        self.debug_str = ''
+        self.overlay = None
+
+    def tick(self, screen, game_window, info_window):
+        key = screen.getch()
+        if not self.overlay:
+            self.draw(game_window)
+            self.draw_info(info_window)
+            self.map.player.input(key)
+        else:
+            self.overlay.draw()
+            self.overlay.input(key)
 
     # Draw gameplay screen
     def draw(self, screen):
@@ -27,7 +39,9 @@ class Camera:
     def draw_info(self, screen):
         screen.addstr(0, 0, f'{self.map.player.x}:{self.map.player.y}\n')
         screen.addstr('Inventory:\n')
-        for item in self.map.player.inventory:
+        for idx, item in enumerate(self.map.player.inventory):
+            if idx == self.map.player.selected_item:
+                screen.addstr('*')
             screen.addstr(f'{str(item)}: {int(item)}\n')
 
         # screen.addstr('Map debug:\n')
@@ -49,3 +63,4 @@ class Camera:
             self.y -= 1
         if self.map.player.y - self.y > self.height * 0.8 and self.y + self.height < self.map.height:
             self.y += 1
+
