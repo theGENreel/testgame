@@ -1,0 +1,51 @@
+from blocks.air import Air
+
+
+class Camera:
+    def __init__(self, map, width, height):
+        self.width = width
+        self.height = height
+        self.map = map
+        self.x = 0
+        self.y = 0
+
+    # Draw gameplay screen
+    def draw(self, screen):
+        self.update()
+        for line in range(self.y, self.height + self.y):
+            for cell in range(self.x, self.width + self.x):
+                # If body have not a block on body layer, then draw cell from floor layer.
+                if isinstance(self.map.body_layer[line][cell], Air):
+                    screen.addstr(str(self.map.floor_layer[line][cell]))
+                else:
+                    screen.addstr(str(self.map.body_layer[line][cell]))
+            screen.addstr('\n')
+
+        screen.refresh()
+
+    # Draw info screen
+    def draw_info(self, screen):
+        screen.addstr(0, 0, f'{self.map.player.x}:{self.map.player.y}\n')
+        screen.addstr('Inventory:\n')
+        for item in self.map.player.inventory:
+            screen.addstr(f'{str(item)}: {int(item)}\n')
+
+        # screen.addstr('Map debug:\n')
+        # for line in self.map.debug_str.splitlines()[-3:]:
+        #     screen.addstr(f'{line}\n')
+        # screen.addstr('Player debug:\n')
+        # for line in self.map.player.debug_str.splitlines()[-3:]:
+        #     screen.addstr(f'{line}\n')
+
+        screen.refresh()
+
+    # Make camera follow player
+    def update(self):
+        if self.map.player.x - self.x < self.width * 0.2 and self.x > 0:
+            self.x -= 1
+        if self.map.player.x - self.x > self.width * 0.8 and self.x + self.width < self.map.width:
+            self.x += 1
+        if self.map.player.y - self.y < self.height * 0.2 and self.y > 0:
+            self.y -= 1
+        if self.map.player.y - self.y > self.height * 0.8 and self.y + self.height < self.map.height:
+            self.y += 1
