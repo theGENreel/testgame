@@ -8,6 +8,7 @@ class BaseOverlay:
         self.camera = camera
         screen_w = os.get_terminal_size().columns
         screen_h = os.get_terminal_size().lines
+        screen_w = camera.game_window.getmaxyx()[1]
         self.window = curses.newwin(int(screen_h * 0.8), int(screen_w * 0.8), int(screen_h * 0.1), int(screen_w * 0.1))
 
     @abstractmethod

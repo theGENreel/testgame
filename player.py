@@ -1,5 +1,9 @@
+import copy
+import logging
+
 from blocks.air import Air
 from overlays.inventory_overlay import InventoryOverlay
+from overlays.crafting_overlay import CraftingOverlay
 
 
 class Player:
@@ -12,6 +16,7 @@ class Player:
         self.symbol = '@'
         self.debug_str = ''
         self.selected_item = 0
+        # logging.basicConfig(filename='logs/player.log', encoding='utf-8', level=logging.DEBUG)
 
     def __str__(self):
         return self.symbol
@@ -23,6 +28,7 @@ class Player:
             self.inventory[cur].count += item.count
         else:
             if len(self.inventory) < self.inventory_slots:
+                item = copy.copy(item)
                 self.inventory.append(item)
             else:
                 print(f"Drop item {item}")
@@ -32,6 +38,23 @@ class Player:
         #         self.inventory.append(item)
         # else:
         #     self.inventory[item_in_inventory]['count'] += item['count']
+
+    def remove_items(self, items: []):
+        for item in items:
+            it = next((i for i, it in enumerate(self.inventory) if type(it) == type(item)), None)
+            if it is not None:
+                self.inventory[it].count -= item.count
+                if self.inventory[it].count <= 0:
+                    self.inventory.pop(it)
+
+    def has_items(self, items: []):
+        for item in items:
+            it = next((i for i, it in enumerate(self.inventory) if type(it) == type(item)), None)
+            if it is None:
+                return False
+            elif self.inventory[it].count < item.count:
+                return False
+        return True
 
     def input(self, key):
         # Player Movement
@@ -75,4 +98,6 @@ class Player:
                 self.selected_item = int(new_index)
         elif key == ord('I') or key == ord('i'):
             self.camera.overlay = InventoryOverlay(self.camera)
+        elif key == ord('C') or key == ord('c'):
+            self.camera.overlay = CraftingOverlay(self.camera)
 

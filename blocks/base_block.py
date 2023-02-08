@@ -1,6 +1,10 @@
+from abc import abstractmethod
+
+
 class BaseBlock:
     def __init__(self):
         self.opaque = False
+        self.ticking = False
         self.symbol = ' '
 
     def __str__(self):
@@ -13,3 +17,10 @@ class BaseBlock:
     # Sets symbol for draw
     def set_symbol(self, symbol: chr):
         self.symbol = symbol
+
+    def set_ticking(self, ticking: bool):
+        self.ticking = ticking
+
+    @abstractmethod
+    def tick(self):
+        pass

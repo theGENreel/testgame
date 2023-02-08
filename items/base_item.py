@@ -2,10 +2,10 @@ from abc import abstractmethod
 
 
 class BaseItem:
-    def __init__(self):
+    def __init__(self, count=1):
         self.interactable = False
         self.name = 'Item'
-        self.count = 1
+        self.count = count
 
     def __str__(self):
         return self.name

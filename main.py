@@ -19,17 +19,17 @@ def main(screen):
     screen_h = os.get_terminal_size().lines
     window_separator = int(screen_w * 0.85)
     map = Map(250, 250)
-    camera = Camera(map, screen_w - (screen_w - window_separator) - 1, screen_h - 1)
-    player = Player(camera)
-    map.add_player(player)
     game_window = curses.newwin(screen_h, window_separator, 0, 0)
     info_window = curses.newwin(screen_h, screen_w - window_separator, 0, window_separator + 1)
+    camera = Camera(screen, map, screen_w - (screen_w - window_separator) - 1, screen_h - 1, game_window, info_window)
+    player = Player(camera)
+    map.add_player(player)
 
     while True:
         start = datetime.datetime.now()
         game_window.clear()
         info_window.clear()
-        camera.tick(screen, game_window, info_window)
+        camera.tick()
         time_rest = 1 / 60 - (datetime.datetime.now() - start).seconds
         if time_rest > 0:
             time.sleep(time_rest)

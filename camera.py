@@ -2,23 +2,27 @@ from blocks.air import Air
 
 
 class Camera:
-    def __init__(self, map, width, height):
+    def __init__(self, screen, map, width, height, game_window, info_window):
+        self.screen = screen
         self.width = width
         self.height = height
         self.map = map
+        self.game_window = game_window
+        self.info_window = info_window
         self.x = 0
         self.y = 0
         self.debug_str = ''
         self.overlay = None
 
-    def tick(self, screen, game_window, info_window):
-        key = screen.getch()
+    def tick(self):
+        key = self.screen.getch()
         if not self.overlay:
-            self.draw(game_window)
-            self.draw_info(info_window)
+            self.draw(self.game_window)
+            self.draw_info(self.info_window)
             self.map.player.input(key)
         else:
             self.overlay.draw()
+            self.draw_info(self.info_window)
             self.overlay.input(key)
 
     # Draw gameplay screen
@@ -28,6 +32,7 @@ class Camera:
             for cell in range(self.x, self.width + self.x):
                 # If body have not a block on body layer, then draw cell from floor layer.
                 if isinstance(self.map.body_layer[line][cell], Air):
+                    pass
                     screen.addstr(str(self.map.floor_layer[line][cell]))
                 else:
                     screen.addstr(str(self.map.body_layer[line][cell]))
