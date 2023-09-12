@@ -44,10 +44,10 @@ class Camera:
     def draw_info(self, screen):
         screen.addstr(0, 0, f'{self.map.player.x}:{self.map.player.y}\n')
         screen.addstr('Inventory:\n')
-        for idx, item in enumerate(self.map.player.inventory):
+        for idx, slot in enumerate(self.map.player.inventory.slots):
             if idx == self.map.player.selected_item:
                 screen.addstr('*')
-            screen.addstr(f'{str(item)}: {int(item)}\n')
+            screen.addstr(f'{str(slot.item)}: {slot.count}\n')
 
         # screen.addstr('Map debug:\n')
         # for line in self.map.debug_str.splitlines()[-3:]:

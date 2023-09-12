@@ -5,6 +5,7 @@ class BaseBlock:
     def __init__(self):
         self.opaque = False
         self.ticking = False
+        self.interactable = False
         self.symbol = ' '
 
     def __str__(self):
@@ -21,6 +22,14 @@ class BaseBlock:
     def set_ticking(self, ticking: bool):
         self.ticking = ticking
 
-    @abstractmethod
+    def set_interactable(self, interactable):
+        self.interactable = interactable
+
     def tick(self):
+        pass
+
+    def on_place(self, initiator=None):
+        pass
+
+    def on_interact(self, initiator):
         pass

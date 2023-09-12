@@ -1,7 +1,7 @@
 from items.ore_item import OreItem
 
 
-class CopperOreItem(OreItem):
+class CoalOreItem(OreItem):
     def __init__(self):
         super().__init__()
-        self.set_name('Copper Ore')
+        self.set_name('Coal Ore')

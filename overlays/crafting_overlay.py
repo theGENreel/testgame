@@ -29,10 +29,10 @@ class CraftingOverlay(BaseOverlay):
         main_end = int(self.window.getmaxyx()[1] * self.main_width)
         for idx, craft in enumerate(Crafts.crafts[self.category_name]):
             self.window.move(3 + idx, 1)
-            text = str(craft['out']) + (' ' * (main_end - len(str(craft['out']))))
+            text = str(craft['out'][0]) + (' ' * (main_end - len(str(craft['out'][0]))))
             if idx == self.craft_selection:
                 self.window.addstr(text, curses.A_REVERSE)
-            elif self.camera.map.player.has_items(craft['in']):
+            elif self.camera.map.player.inventory.has_items(craft['in'][0][0], craft['in'][0][1]): # TODO: NotDIM to multi-item crafts
                 self.window.addstr(text, curses.A_NORMAL)
             else:
                 self.window.addstr(text, curses.A_DIM)
@@ -49,8 +49,12 @@ class CraftingOverlay(BaseOverlay):
         elif (key == ord('S') or key == ord('s') or key == curses.KEY_DOWN) and self.craft_selection < len(Crafts.crafts[self.category_name]) - 1:
             self.craft_selection += 1
         elif key == curses.KEY_ENTER or key == 10:
-            if self.camera.map.player.has_items(Crafts.crafts[self.category_name][self.craft_selection]['in']):
-                self.camera.map.player.remove_items(Crafts.crafts[self.category_name][self.craft_selection]['in'])
-                self.camera.map.player.give_item(Crafts.crafts[self.category_name][self.craft_selection]['out'])
+            item_in = Crafts.crafts[self.category_name][self.craft_selection]['in'][0]
+            count_in = Crafts.crafts[self.category_name][self.craft_selection]['in'][1]
+            item_out = Crafts.crafts[self.category_name][self.craft_selection]['out'][0]
+            count_out = Crafts.crafts[self.category_name][self.craft_selection]['out'][1]
+            if self.camera.player.inventory.has_items(item_in, count_in):
+                self.camera.map.player.inventory.remove_items(item_in, count_in)
+                self.camera.map.player.inventory.add_items(item_out, count_out)
         elif key == 27:
             self.camera.overlay = None

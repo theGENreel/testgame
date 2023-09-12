@@ -4,7 +4,4 @@ from items.iron_ore_item import IronOreItem
 
 class FIronOre(FOre):
     def __init__(self):
-        super().__init__()
-
-    def on_interact(self, initiator):
-        initiator.give_item(IronOreItem())
+        super().__init__(item=IronOreItem(), count=128)

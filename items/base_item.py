@@ -1,29 +1,18 @@
 from abc import abstractmethod
+from typing import Type
+
+from blocks.base_block import BaseBlock
 
 
 class BaseItem:
-    def __init__(self, count=1):
+    def __init__(self):
         self.interactable = False
+        self.placeable = False
+        self.block = None
         self.name = 'Item'
-        self.count = count
 
     def __str__(self):
         return self.name
-
-    def __int__(self):
-        return self.count
-
-    def __add__(self, other):
-        self.count += other.count
-
-    def __sub__(self, other):
-        self.count -= other
-
-    def __divmod__(self, other):
-        self.count /= other
-
-    def __mul__(self, other):
-        self.count *= other
 
     def set_name(self, name: str):
         self.name = name
@@ -31,9 +20,18 @@ class BaseItem:
     def set_interactable(self, interactable):
         self.interactable = interactable
 
-    def set_count(self, count):
-        self.count = count
+    def set_placeable(self, placeable, block: Type[BaseBlock]):
+        self.placeable = placeable
+        self.block = block
 
     @abstractmethod
     def on_interact(self, initiator):
         pass
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return True if self.name == other else False
+        elif isinstance(other, BaseItem):
+            return True if self.name == other.name else False
+        else:
+            return False

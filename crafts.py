@@ -5,7 +5,7 @@ from items.iron_ore_item import IronOreItem
 class Crafts:
     crafts = {
         'Basic': [
-            {'in': [CopperOreItem(count=10)], 'out': IronOreItem(count=2)},
-            {'in': [IronOreItem(count=2)], 'out': CopperOreItem(count=10)}
+            {'in': [(CopperOreItem(), 1)], 'out': (IronOreItem(), 2)},
+            {'in': [(IronOreItem(), 2)], 'out': (CopperOreItem(), 10)}
         ]
     }
