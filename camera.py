@@ -42,7 +42,7 @@ class Camera:
 
     # Draw info screen
     def draw_info(self, screen):
-        screen.addstr(0, 0, f'{self.map.player.x}:{self.map.player.y}\n')
+        screen.addstr(0, 0, f'{self.map.player.x}:{self.map.player.y}  {self.map.player.side}\n')
         screen.addstr('Inventory:\n')
         for idx, slot in enumerate(self.map.player.inventory.slots):
             if idx == self.map.player.selected_item:

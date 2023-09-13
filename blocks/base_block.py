@@ -28,7 +28,7 @@ class BaseBlock:
     def tick(self):
         pass
 
-    def on_place(self, initiator=None):
+    def on_place(self, side_blocks: dict, initiator=None):
         pass
 
     def on_interact(self, initiator):
