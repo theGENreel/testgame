@@ -30,6 +30,10 @@ def main(screen):
         game_window.clear()
         info_window.clear()
         camera.tick()
+        for block in map.ticking_blocks:
+            if block.is_ticking():
+                block.tick()
+
         time_rest = 1 / 60 - (datetime.datetime.now() - start).seconds
         if time_rest > 0:
             time.sleep(time_rest)

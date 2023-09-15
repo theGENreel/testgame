@@ -9,6 +9,10 @@ class Pipe(BaseBlock):
         self.set_interactable(True)
         self.sides = {'up': False, 'down': False, 'left': False, 'right': False}
         self.update_sides()
+        self.set_ticking(True)
+
+    def tick(self):
+        pass
 
     def update_sides(self):
         s = ''

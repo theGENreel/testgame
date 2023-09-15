@@ -22,6 +22,9 @@ class BaseBlock:
     def set_ticking(self, ticking: bool):
         self.ticking = ticking
 
+    def is_ticking(self):
+        return self.ticking
+
     def set_interactable(self, interactable):
         self.interactable = interactable
 

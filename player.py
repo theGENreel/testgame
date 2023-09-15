@@ -1,11 +1,10 @@
-import copy
-import logging
+from typing import Type, Union
 
 from blocks.air import Air
-from blocks.pipe import Pipe
 from inventory.container import Container
 from inventory.slot import Slot
-from items.pipe_item import PipeItem
+from items.furnace_item import FurnaceItem
+from overlays.base_overlay import BaseOverlay
 from overlays.inventory_overlay import InventoryOverlay
 from overlays.crafting_overlay import CraftingOverlay
 
@@ -16,8 +15,8 @@ class Player:
         self.x = x
         self.y = y
         self.inventory = Container(10)
-        self.inventory.slots[0].item = PipeItem()
-        self.inventory.slots[0].count = 10
+        self.inventory.slots[0].item = FurnaceItem()
+        self.inventory.slots[0].count = 1
         self.symbol = '@'
         self.debug_str = ''
         self.selected_item = 0
@@ -27,6 +26,9 @@ class Player:
 
     def __str__(self):
         return self.symbol
+
+    def set_overlay(self, overlay: Union[Type[BaseOverlay], None]):
+        self.camera.overlay = overlay
 
     # def give_item(self, item):
     #     cur = next((i for i, it in enumerate(self.inventory) if isinstance(it, type(item))), None)
@@ -63,6 +65,16 @@ class Player:
     #             return False
     #     return True
 
+    def interact(self):
+        y = self.x - 1 if self.side == 'l' else self.x + 1 if self.side == 'r' else self.x
+        x = self.y - 1 if self.side == 'u' else self.y + 1 if self.side == 'd' else self.y
+        if x >= 0 and y >= 0 and self.camera.map.body_layer[x][y].interactable:
+            self.camera.map.body_layer[x][y].on_interact(self)
+        elif self.camera.map.body_layer[self.y][self.x]:
+            if self.camera.map.floor_layer[self.y][self.x].interactable:
+                self.debug_str += 'Interact\n'
+                self.camera.map.floor_layer[self.y][self.x].on_interact(self)
+
     def place_block(self, slot: Slot):
         if slot.item is not None:
             if slot.count > 0 and slot.item.placeable:
@@ -88,6 +100,7 @@ class Player:
                     if isinstance(side_blocks['d'], Player):
                         side_blocks['d'] = self.inside_block
                     self.camera.map.body_layer[x][y].on_place(side_blocks, self)
+                    self.camera.map.ticking_blocks.append(self.camera.map.body_layer[x][y])
 
     def input(self, key):
         # Player Movement
@@ -128,9 +141,7 @@ class Player:
         # Interacting
         elif key == ord('E') or key == ord('e'):
             self.debug_str += 'Interact pressed\n'
-            if self.camera.map.floor_layer[self.y][self.x].interactable:
-                self.debug_str += 'Interact\n'
-                self.camera.map.floor_layer[self.y][self.x].on_interact(self)
+            self.interact()
         elif key == ord('1') or key == ord('2') or key == ord('3') or key == ord('4') or key == ord('5') or key == ord(
             '6') or key == ord('7') or key == ord('8') or key == ord('9') or key == ord('0'):
             c = chr(key)
@@ -138,9 +149,9 @@ class Player:
             if int(new_index) < len(self.inventory.slots):
                 self.selected_item = int(new_index)
         elif key == ord('I') or key == ord('i'):
-            self.camera.overlay = InventoryOverlay(self.camera)
+            self.set_overlay(InventoryOverlay(self.camera))
         elif key == ord('C') or key == ord('c'):
-            self.camera.overlay = CraftingOverlay(self.camera)
+            self.set_overlay(CraftingOverlay(self.camera))
         elif key == ord('P') or key == ord('p'):
             self.place_block(self.inventory.slots[self.selected_item])
 

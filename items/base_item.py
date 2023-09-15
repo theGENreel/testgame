@@ -8,6 +8,9 @@ class BaseItem:
     def __init__(self):
         self.interactable = False
         self.placeable = False
+        self.smelt_time = 0
+        self.smelt_to = None
+        self.burn_time = 0
         self.block = None
         self.name = 'Item'
 

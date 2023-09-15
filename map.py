@@ -1,3 +1,5 @@
+from perlin_noise import PerlinNoise
+
 from blocks.pipe import Pipe
 from fblocks.fstone import StoneFBlock
 from blocks.air import Air
@@ -15,6 +17,7 @@ class Map:
         self.height = height
         self.floor_layer = []
         self.body_layer = []
+        self.ticking_blocks = []
 
         for line in range(height):
             self.body_layer.append([])
@@ -59,7 +62,17 @@ class Map:
         self.body_layer[1][10] = Pipe()
         # Creating player
         self.debug_str = ''
+        self.generate_ores(1)
 
     def add_player(self, player: Player):
         self.player = player
         self.body_layer[self.player.x][self.player.y] = self.player
+
+    def generate_ores(self, seed: int):
+        noise = PerlinNoise(octaves=20, seed=seed)
+        # xpix, ypix = 128, 128
+        for x, line in enumerate(self.floor_layer):
+            for y, block in enumerate(line):
+                if noise([x / self.width, y / self.height]) <= -0.55:
+                    self.floor_layer[x][y] = FCoalOre()
+        # pic = [[1 if noise([i / xpix, j / ypix]) > -0.4 else 0 for j in range(xpix)] for i in range(ypix)]
