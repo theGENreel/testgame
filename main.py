@@ -30,6 +30,7 @@ def main(screen):
         game_window.clear()
         info_window.clear()
         camera.tick()
+        player.tick()
         for block in map.ticking_blocks:
             if block.is_ticking():
                 block.tick()

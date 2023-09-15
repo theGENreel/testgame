@@ -21,6 +21,8 @@ class Player:
         self.debug_str = ''
         self.selected_item = 0
         self.side = 'r'
+        self.show_side = False
+        self.show_side_counter = 0
         self.inside_block = Air()
         # logging.basicConfig(filename='logs/player.log', encoding='utf-8', level=logging.DEBUG)
 
@@ -29,6 +31,26 @@ class Player:
 
     def set_overlay(self, overlay: Union[Type[BaseOverlay], None]):
         self.camera.overlay = overlay
+
+    def tick(self):
+        if self.show_side_counter < 30:
+            self.show_side_counter += 1
+        else:
+            self.show_side_counter = 0
+            self.show_side = not self.show_side
+
+        if self.show_side:
+            if self.side == 'l':
+                self.symbol = '<'
+            elif self.side == 'r':
+                self.symbol = '>'
+            elif self.side == 'u':
+                self.symbol = '^'
+            elif self.side == 'd':
+                self.symbol = 'v'
+        else:
+            self.symbol = '@'
+
 
     # def give_item(self, item):
     #     cur = next((i for i, it in enumerate(self.inventory) if isinstance(it, type(item))), None)
