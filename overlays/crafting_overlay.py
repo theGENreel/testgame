@@ -15,6 +15,7 @@ class CraftingOverlay(BaseOverlay):
         self.craft_selection = 0
 
     def draw(self):
+        self.window.clear()
         self.window.box('|', '-')
         self.window.move(1, 1)
         for idx, category in enumerate(Crafts.crafts):
@@ -36,6 +37,26 @@ class CraftingOverlay(BaseOverlay):
                 self.window.addstr(text, curses.A_NORMAL)
             else:
                 self.window.addstr(text, curses.A_DIM)
+        self.window.move(2, main_end)
+        self.window.addstr('┬')
+        for i in range(3, self.window.getmaxyx()[0] - 1):
+            self.window.move(i, main_end)
+            self.window.addstr('|')
+        self.window.move(self.window.getmaxyx()[0] - 1, main_end)
+        self.window.addstr('┴')
+        self.window.move(3, main_end+1)
+        self.window.addstr('Needed:')
+        for idx, item in enumerate(Crafts.crafts[self.category_name][self.craft_selection]['in']):
+            self.window.move(4 + idx, main_end + 1)
+            count = ' ' * (self.window.getmaxyx()[1] - main_end - len(str(item[0])) - 1 - len(str(item[1])) - 1) + str(
+                item[1])
+            self.window.addstr(f'{item[0]}' + count)
+        self.window.move(4 + idx + 2, main_end + 1)
+        self.window.addstr('Output:')
+        self.window.move(4 + idx + 3, main_end + 1)
+        out = Crafts.crafts[self.category_name][self.craft_selection]['out']
+        count = ' ' * (self.window.getmaxyx()[1] - main_end - len(str(out[0])) - 1 - len(str(out[1])) - 1) + str(out[1])
+        self.window.addstr(f'{out[0]}' + count)
         self.window.refresh()
 
     def input(self, key):
@@ -49,12 +70,15 @@ class CraftingOverlay(BaseOverlay):
         elif (key == ord('S') or key == ord('s') or key == curses.KEY_DOWN) and self.craft_selection < len(Crafts.crafts[self.category_name]) - 1:
             self.craft_selection += 1
         elif key == curses.KEY_ENTER or key == 10:
-            item_in = Crafts.crafts[self.category_name][self.craft_selection]['in'][0]
-            count_in = Crafts.crafts[self.category_name][self.craft_selection]['in'][1]
+            can_craft = True
+            for item, count in Crafts.crafts[self.category_name][self.craft_selection]['in']:
+                if not self.camera.map.player.inventory.has_items(item, count):
+                    can_craft = False
             item_out = Crafts.crafts[self.category_name][self.craft_selection]['out'][0]
             count_out = Crafts.crafts[self.category_name][self.craft_selection]['out'][1]
-            if self.camera.player.inventory.has_items(item_in, count_in):
-                self.camera.map.player.inventory.remove_items(item_in, count_in)
+            if can_craft:
+                for item, count in Crafts.crafts[self.category_name][self.craft_selection]['in']:
+                    self.camera.map.player.inventory.remove_items(item, count)
                 self.camera.map.player.inventory.add_items(item_out, count_out)
         elif key == 27:
             self.camera.overlay = None
