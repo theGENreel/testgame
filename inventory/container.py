@@ -31,7 +31,7 @@ class Container:
 
     def merge_slot(self, ext_slot: Slot, count: int = None):
         ext_count = ext_slot.count
-        if ext_count < count:
+        if count is not None and ext_count < count:
             count = ext_count
         if ext_slot.count > 0:
             while (ext_slot.count > 0) if count is None else (ext_slot.count > ext_count - count):
