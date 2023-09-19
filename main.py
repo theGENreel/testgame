@@ -25,15 +25,16 @@ def main(screen):
     player = Player(camera)
     map.add_player(player)
 
-    while True:
+    while not camera.exiting:
         start = datetime.datetime.now()
         game_window.clear()
         info_window.clear()
         camera.tick()
-        player.tick()
-        for block in map.ticking_blocks:
-            if block.is_ticking():
-                block.tick()
+        if camera.overlay is None or (camera.overlay is not None and not camera.overlay.pausing):
+            player.tick()
+            for block in map.ticking_blocks:
+                if block.is_ticking():
+                    block.tick()
 
         time_rest = 1 / 60 - (datetime.datetime.now() - start).seconds
         if time_rest > 0:

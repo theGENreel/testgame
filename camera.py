@@ -13,6 +13,7 @@ class Camera:
         self.y = 0
         self.debug_str = ''
         self.overlay = None
+        self.exiting = False
 
     def tick(self):
         key = self.screen.getch()

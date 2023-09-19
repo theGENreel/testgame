@@ -7,6 +7,7 @@ from items.furnace_item import FurnaceItem
 from overlays.base_overlay import BaseOverlay
 from overlays.inventory_overlay import InventoryOverlay
 from overlays.crafting_overlay import CraftingOverlay
+from overlays.pause_overlay import PauseOverlay
 
 
 class Player:
@@ -139,4 +140,6 @@ class Player:
             self.set_overlay(CraftingOverlay(self.camera))
         elif key == ord('P') or key == ord('p'):
             self.place_block(self.inventory.slots[self.selected_item])
+        elif key == 27:
+            self.set_overlay(PauseOverlay(self.camera))
 
