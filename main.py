@@ -5,7 +5,7 @@ import time
 
 from map import Map
 from camera import Camera
-from player import Player
+from entities.player import EntityPlayer
 
 
 def main(screen):
@@ -22,7 +22,7 @@ def main(screen):
     game_window = curses.newwin(screen_h, window_separator, 0, 0)
     info_window = curses.newwin(screen_h, screen_w - window_separator, 0, window_separator + 1)
     camera = Camera(screen, map, screen_w - (screen_w - window_separator) - 1, screen_h - 1, game_window, info_window)
-    player = Player(camera)
+    player = EntityPlayer(camera)
     map.add_player(player)
 
     while not camera.exiting:
@@ -35,6 +35,8 @@ def main(screen):
             for block in map.ticking_blocks:
                 if block.is_ticking():
                     block.tick()
+            for mob in map.ticking_mobs:
+                mob.tick()
 
         time_rest = 1 / 60 - (datetime.datetime.now() - start).seconds
         if time_rest > 0:

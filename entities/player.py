@@ -1,6 +1,7 @@
 from typing import Type, Union
 
 from blocks.air import Air
+from entities.base_entity import BaseEntity
 from inventory.container import Container
 from inventory.slot import Slot
 from items.furnace_item import FurnaceItem
@@ -10,24 +11,17 @@ from overlays.crafting_overlay import CraftingOverlay
 from overlays.pause_overlay import PauseOverlay
 
 
-class Player:
+class EntityPlayer(BaseEntity):
     def __init__(self, camera, x=0, y=0):
+        super().__init__(camera.map, '@', 0, 0)
         self.camera = camera
-        self.x = x
-        self.y = y
         self.inventory = Container(10)
         self.inventory.slots[0].item = FurnaceItem()
         self.inventory.slots[0].count = 1
-        self.symbol = '@'
         self.debug_str = ''
         self.selected_item = 0
-        self.side = 'r'
         self.show_side = False
         self.show_side_counter = 0
-        self.inside_block = Air()
-
-    def __str__(self):
-        return self.symbol
 
     def set_overlay(self, overlay: Union[Type[BaseOverlay], None]):
         self.camera.overlay = overlay
@@ -77,13 +71,13 @@ class Player:
                         'u': self.camera.map.body_layer[x-1][y] if x-1 >= 0 else None,
                         'd': self.camera.map.body_layer[x+1][y] if x+1 <= self.camera.map.height-1 else None
                     }
-                    if isinstance(side_blocks['l'], Player):
+                    if isinstance(side_blocks['l'], EntityPlayer):
                         side_blocks['l'] = self.inside_block
-                    if isinstance(side_blocks['r'], Player):
+                    if isinstance(side_blocks['r'], EntityPlayer):
                         side_blocks['r'] = self.inside_block
-                    if isinstance(side_blocks['u'], Player):
+                    if isinstance(side_blocks['u'], EntityPlayer):
                         side_blocks['u'] = self.inside_block
-                    if isinstance(side_blocks['d'], Player):
+                    if isinstance(side_blocks['d'], EntityPlayer):
                         side_blocks['d'] = self.inside_block
                     self.camera.map.body_layer[x][y].on_place(side_blocks, self)
                     self.camera.map.ticking_blocks.append(self.camera.map.body_layer[x][y])
@@ -93,37 +87,13 @@ class Player:
         if key == ord('W') or key == ord('S') or key == ord('A') or key == ord('D') or key == ord('w') or key == ord(
                 's') or key == ord('a') or key == ord('d'):
             if key == ord('W') or key == ord('w'):
-                self.side = 'u'
-                if self.y > 0:
-                    if not self.camera.map.body_layer[self.y - 1][self.x].opaque:
-                        self.camera.map.body_layer[self.y][self.x] = self.inside_block
-                        self.inside_block = self.camera.map.body_layer[self.y - 1][self.x]
-                        self.camera.map.body_layer[self.y - 1][self.x] = self
-                        self.y = self.y - 1
+                self.move_up()
             elif key == ord('S') or key == ord('s'):
-                self.side = 'd'
-                if self.y < self.camera.map.height - 1:
-                    if not self.camera.map.body_layer[self.y + 1][self.x].opaque:
-                        self.camera.map.body_layer[self.y][self.x] = self.inside_block
-                        self.inside_block = self.camera.map.body_layer[self.y + 1][self.x]
-                        self.camera.map.body_layer[self.y + 1][self.x] = self
-                        self.y = self.y + 1
+                self.move_down()
             elif key == ord('A') or key == ord('a'):
-                self.side = 'l'
-                if self.x > 0:
-                    if not self.camera.map.body_layer[self.y][self.x - 1].opaque:
-                        self.camera.map.body_layer[self.y][self.x] = self.inside_block
-                        self.inside_block = self.camera.map.body_layer[self.y][self.x - 1]
-                        self.camera.map.body_layer[self.y][self.x - 1] = self
-                        self.x = self.x - 1
+                self.move_left()
             elif key == ord('D') or key == ord('d'):
-                self.side = 'r'
-                if self.x < self.camera.map.width - 1:
-                    if not self.camera.map.body_layer[self.y][self.x + 1].opaque:
-                        self.camera.map.body_layer[self.y][self.x] = self.inside_block
-                        self.inside_block = self.camera.map.body_layer[self.y][self.x + 1]
-                        self.camera.map.body_layer[self.y][self.x + 1] = self
-                        self.x = self.x + 1
+                self.move_right()
         # Interacting
         elif key == ord('E') or key == ord('e'):
             self.debug_str += 'Interact pressed\n'

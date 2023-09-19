@@ -1,13 +1,14 @@
 from perlin_noise import PerlinNoise
 
 from blocks.pipe import Pipe
+from entities.player import EntityPlayer
 from fblocks.fstone import StoneFBlock
 from blocks.air import Air
 from blocks.stone import Stone
 from fblocks.firon_ore import FIronOre
 from fblocks.fcopper_ore import FCopperOre
 from fblocks.fcoal_ore import FCoalOre
-from player import Player
+from entities.mobs.base_mob import BaseMob
 
 
 class Map:
@@ -18,6 +19,7 @@ class Map:
         self.floor_layer = []
         self.body_layer = []
         self.ticking_blocks = []
+        self.ticking_mobs = []
 
         for line in range(height):
             self.body_layer.append([])
@@ -64,7 +66,10 @@ class Map:
         self.debug_str = ''
         self.generate_ores(1)
 
-    def add_player(self, player: Player):
+        self.body_layer[14][2] = BaseMob(self, '$', 14, 2)
+        self.ticking_mobs.append(self.body_layer[14][2])
+
+    def add_player(self, player: EntityPlayer):
         self.player = player
         self.body_layer[self.player.x][self.player.y] = self.player
 
