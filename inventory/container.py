@@ -65,20 +65,3 @@ class Container:
     def add_items(self, ext_item: BaseItem, count: int): #  TODO: Allow to add items in >1 slots
         slot = Slot(max_size=count, item=ext_item, count=count)
         self.merge_slot(slot)
-        # items = self.get_items()
-        # while count > 0:
-        #     for idx, item in enumerate(items):
-        #         if item == ext_item and not self.slots[idx].is_filled():
-        #             # count -= self.slots[idx].remain_count()
-        #             if count >= self.slots[idx].remain_count():
-        #                 count -= self.slots[idx].remain_count()
-        #                 self.slots[idx].count = self.slots[idx].max_size
-        #             else:
-        #                 self.slots[idx].count += count
-        #                 count = 0
-        #                 return
-
-
-        # if ext_item in items:
-        #     self.slots[items.index(ext_item)].add_item(ext_item, count)
-

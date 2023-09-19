@@ -24,7 +24,6 @@ class Player:
         self.show_side = False
         self.show_side_counter = 0
         self.inside_block = Air()
-        # logging.basicConfig(filename='logs/player.log', encoding='utf-8', level=logging.DEBUG)
 
     def __str__(self):
         return self.symbol
@@ -50,42 +49,6 @@ class Player:
                 self.symbol = 'v'
         else:
             self.symbol = '@'
-
-
-    # def give_item(self, item):
-    #     cur = next((i for i, it in enumerate(self.inventory) if isinstance(it, type(item))), None)
-    #     self.debug_str += str(cur) + '\n'
-    #     if cur is not None:
-    #         self.inventory[cur].count += item.count
-    #     else:
-    #         if len(self.inventory) < self.inventory_slots:
-    #             item = copy.copy(item)
-    #             self.inventory.append(item)
-    #         else:
-    #             print(f"Drop item {item}")
-    #     # item_in_inventory = next((i for i, it in enumerate(self.inventory) if it['name'] == item['name']), None)
-    #     # if not item_in_inventory:
-    #     #     if len(self.inventory) < self.inventory_slots:
-    #     #         self.inventory.append(item)
-    #     # else:
-    #     #     self.inventory[item_in_inventory]['count'] += item['count']
-
-    # def remove_items(self, items: []):
-    #     for item in items:
-    #         it = next((i for i, it in enumerate(self.inventory) if type(it) == type(item)), None)
-    #         if it is not None:
-    #             self.inventory[it].count -= item.count
-    #             if self.inventory[it].count <= 0:
-    #                 self.inventory.pop(it)
-
-    # def has_items(self, items: []):
-    #     for item in items:
-    #         it = next((i for i, it in enumerate(self.inventory) if type(it) == type(item)), None)
-    #         if it is None:
-    #             return False
-    #         elif self.inventory[it].count < item.count:
-    #             return False
-    #     return True
 
     def interact(self):
         y = self.x - 1 if self.side == 'l' else self.x + 1 if self.side == 'r' else self.x

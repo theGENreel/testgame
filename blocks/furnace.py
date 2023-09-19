@@ -1,7 +1,6 @@
 from blocks.base_block import BaseBlock
 from inventory.slot import Slot
 from overlays.furnace_overlay import FurnaceOverlay
-# from player import Player
 
 
 class Furnace(BaseBlock):

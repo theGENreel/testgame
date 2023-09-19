@@ -1,6 +1,3 @@
-from abc import abstractmethod
-
-
 class BaseBlock:
     def __init__(self):
         self.opaque = False

@@ -49,13 +49,6 @@ class Camera:
                 screen.addstr('*')
             screen.addstr(f'{str(slot.item)}: {slot.count}\n')
 
-        # screen.addstr('Map debug:\n')
-        # for line in self.map.debug_str.splitlines()[-3:]:
-        #     screen.addstr(f'{line}\n')
-        # screen.addstr('Player debug:\n')
-        # for line in self.map.player.debug_str.splitlines()[-3:]:
-        #     screen.addstr(f'{line}\n')
-
         screen.refresh()
 
     # Make camera follow player

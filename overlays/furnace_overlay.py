@@ -1,8 +1,6 @@
 import curses
 
-# from blocks.furnace import Furnace
 from overlays.base_overlay import BaseOverlay
-from crafts import Crafts
 
 
 class FurnaceOverlay(BaseOverlay):

@@ -1,5 +1,4 @@
 from blocks.pipe import Pipe
-from blocks.stone import Stone
 from items.base_item import BaseItem
 
 

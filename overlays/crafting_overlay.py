@@ -1,7 +1,5 @@
 import curses
-import logging
 
-import crafts
 from overlays.base_overlay import BaseOverlay
 from crafts import Crafts
 
