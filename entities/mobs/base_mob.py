@@ -1,53 +1,23 @@
 from blocks.air import Air
+from entities.base_entity import BaseEntity
+from entities.player import EntityPlayer
 
 
-class BaseMob:
+class BaseMob(BaseEntity):
     def __init__(self, map: "Map", symbol: str, x: int, y: int):
-        self.map = map
-        self.symbol = symbol
-        self.x = x
-        self.y = y
-        self.side = 'r'
-        self.inside_block = Air()
-
-    def __str__(self):
-        return self.symbol
-
-    def move_up(self):
-        self.side = 'u'
-        if self.y > 0:
-            if not self.map.body_layer[self.y - 1][self.x].opaque:
-                self.map.body_layer[self.y][self.x] = self.inside_block
-                self.inside_block = self.map.body_layer[self.y - 1][self.x]
-                self.map.body_layer[self.y - 1][self.x] = self
-                self.y = self.y - 1
-
-    def move_down(self):
-        self.side = 'd'
-        if self.y < self.map.height - 1:
-            if not self.map.body_layer[self.y + 1][self.x].opaque:
-                self.map.body_layer[self.y][self.x] = self.inside_block
-                self.inside_block = self.map.body_layer[self.y + 1][self.x]
-                self.map.body_layer[self.y + 1][self.x] = self
-                self.y = self.y + 1
-
-    def move_left(self):
-        self.side = 'l'
-        if self.x > 0:
-            if not self.map.body_layer[self.y][self.x - 1].opaque:
-                self.map.body_layer[self.y][self.x] = self.inside_block
-                self.inside_block = self.map.body_layer[self.y][self.x - 1]
-                self.map.body_layer[self.y][self.x - 1] = self
-                self.x = self.x - 1
-
-    def move_right(self):
-        self.side = 'r'
-        if self.x < self.map.width - 1:
-            if not self.map.body_layer[self.y][self.x + 1].opaque:
-                self.map.body_layer[self.y][self.x] = self.inside_block
-                self.inside_block = self.map.body_layer[self.y][self.x + 1]
-                self.map.body_layer[self.y][self.x + 1] = self
-                self.x = self.x + 1
+        super().__init__(map, symbol, x, y)
+        self.distance_of_view = 15
 
     def tick(self):
-        pass
+        super().tick()
+        for x in range(self.distance_of_view * -1, self.distance_of_view):
+            for y in range(self.distance_of_view * -1, self.distance_of_view):
+                if 0 <= self.x + x < self.map.width and 0 <= self.y + y < self.map.height and type(self.map.body_layer[self.x + x][self.y + y]) == EntityPlayer:
+                    if x < 0:
+                        self.move_left()
+                    elif x > 0:
+                        self.move_right()
+                    if y < 0:
+                        self.move_up()
+                    elif y > 0:
+                        self.move_down()

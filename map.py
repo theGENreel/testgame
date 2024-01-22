@@ -8,6 +8,7 @@ from blocks.stone import Stone
 from fblocks.firon_ore import FIronOre
 from fblocks.fcopper_ore import FCopperOre
 from fblocks.fcoal_ore import FCoalOre
+from fblocks.fore import FOre
 from entities.mobs.base_mob import BaseMob
 
 
@@ -64,20 +65,18 @@ class Map:
         self.body_layer[1][10] = Pipe()
         # Creating player
         self.debug_str = ''
-        self.generate_ores(1)
+        self.generate_ore(FCoalOre, 0.4, 1000, 8)
 
-        self.body_layer[14][2] = BaseMob(self, '$', 14, 2)
+        self.body_layer[14][2] = BaseMob(self, '$', 2, 14)
         self.ticking_mobs.append(self.body_layer[14][2])
 
     def add_player(self, player: EntityPlayer):
         self.player = player
         self.body_layer[self.player.x][self.player.y] = self.player
 
-    def generate_ores(self, seed: int):
+    def generate_ore(self, ore, cut: float, freq_divider: int, seed: int):
         noise = PerlinNoise(octaves=20, seed=seed)
-        # xpix, ypix = 128, 128
         for x, line in enumerate(self.floor_layer):
             for y, block in enumerate(line):
-                if noise([x / self.width, y / self.height]) <= -0.55:
-                    self.floor_layer[x][y] = FCoalOre()
-        # pic = [[1 if noise([i / xpix, j / ypix]) > -0.4 else 0 for j in range(xpix)] for i in range(ypix)]
+                if noise([x / freq_divider, y / freq_divider]) <= cut * -1:
+                    self.floor_layer[x][y] = ore()

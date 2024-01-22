@@ -1,21 +1,19 @@
 import datetime
 import os
 import curses
+import threading
 import time
 import sys
-import pickle
 
 from map import Map
 from camera import Camera
 from entities.player import EntityPlayer
 
 
-def game(map: Map, camera: Camera, player: EntityPlayer, game_window, info_window):
+def tick_generator(camera: Camera, map: Map, player: EntityPlayer):
+    tps = 20
     while not camera.exiting:
-        start = datetime.datetime.now()
-        game_window.clear()
-        info_window.clear()
-        camera.tick()
+        start_frame_time = datetime.datetime.now()
         if camera.overlay is None or (camera.overlay is not None and not camera.overlay.pausing):
             player.tick()
             for block in map.ticking_blocks:
@@ -23,7 +21,21 @@ def game(map: Map, camera: Camera, player: EntityPlayer, game_window, info_windo
                     block.tick()
             for mob in map.ticking_mobs:
                 mob.tick()
+        frame_time = datetime.datetime.now() - start_frame_time
+        time_to_sleep = (((1 / float(tps)) * 1000000) - frame_time.microseconds) / 1000000.0
+        with open('tps', 'w') as file:
+            file.write(str(1 / ((frame_time.microseconds + (time_to_sleep * 1000000.0)) / 1000000.0)))
+        if time_to_sleep > 0:
+            time.sleep(time_to_sleep)
 
+
+def game(map: Map, camera: Camera, player: EntityPlayer, game_window, info_window):
+    threading.Thread(target=tick_generator, args=[camera, map, player]).start()
+    while not camera.exiting:
+        start = datetime.datetime.now()
+        game_window.clear()
+        info_window.clear()
+        camera.tick()
         time_rest = 1 / 60 - (datetime.datetime.now() - start).seconds
         if time_rest > 0:
             time.sleep(time_rest)
@@ -60,6 +72,7 @@ def main_menu(screen):
             elif selection == 1:
                 sys.exit(0)
         screen.refresh()
+
 
 def main(screen):
     curses.noecho()

@@ -1,3 +1,4 @@
+import curses
 from typing import Type, Union
 
 from blocks.air import Air
@@ -22,11 +23,13 @@ class EntityPlayer(BaseEntity):
         self.selected_item = 0
         self.show_side = False
         self.show_side_counter = 0
+        self.speed = 10
 
     def set_overlay(self, overlay: Union[Type[BaseOverlay], None]):
         self.camera.overlay = overlay
 
     def tick(self):
+        super().tick()
         if self.show_side_counter < 30:
             self.show_side_counter += 1
         else:
@@ -84,16 +87,14 @@ class EntityPlayer(BaseEntity):
 
     def input(self, key):
         # Player Movement
-        if key == ord('W') or key == ord('S') or key == ord('A') or key == ord('D') or key == ord('w') or key == ord(
-                's') or key == ord('a') or key == ord('d'):
-            if key == ord('W') or key == ord('w'):
-                self.move_up()
-            elif key == ord('S') or key == ord('s'):
-                self.move_down()
-            elif key == ord('A') or key == ord('a'):
-                self.move_left()
-            elif key == ord('D') or key == ord('d'):
-                self.move_right()
+        if key == ord('W') or key == ord('w') or key == curses.KEY_UP:
+            self.move_up()
+        elif key == ord('S') or key == ord('s') or key == curses.KEY_DOWN:
+            self.move_down()
+        elif key == ord('A') or key == ord('a') or key == curses.KEY_LEFT:
+            self.move_left()
+        elif key == ord('D') or key == ord('d') or key == curses.KEY_RIGHT:
+            self.move_right()
         # Interacting
         elif key == ord('E') or key == ord('e'):
             self.debug_str += 'Interact pressed\n'
